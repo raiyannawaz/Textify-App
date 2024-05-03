@@ -494,7 +494,8 @@ input:-webkit-autofill:active {
 
     /* content  */
     .container .content {
-        height: calc(100vh - 85px);
+        height: calc(100dvh - 85px);
+        padding-top: 2rem;
     }
 
     .converting-content .language-selector,
