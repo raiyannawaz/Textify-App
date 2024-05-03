@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>{{title}}</title>
+</head>
+
+<body>
+    <div class="container">
+        {{!-- Navbar --}}
+        <nav class="navbar">
+            <div class="left-nav">
+                <h1>{{title}}</h1>
+                <button class="btn-toggle">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+            <div class="right-nav">
+                <ul>
+                    <li><a href="/translate">Translate</a></li>
+                    <li class="active"><a href="/dictionary">Dictionary</a></li>
+                    <li><a href="/texttospeech">Text-To-Speech</a></li>
+                    <li><a href="/grammercheck">Grammer Check</a></li>
+                </ul>
+            </div>
+        </nav>
+        {{!-- Navbar --}}
+        {{!-- Content --}}
+     <div class="content">
+            <div class="converting-content">
+                <form id="dictionary" method="post">
+                    <div class="converting-texts">
+                        <textarea name="texts" id="" rows="13">{{texts}}</textarea>
+                        <button type="submit" class="btn">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {{!-- Content --}}
+    </div>
+</body>
+{{>script}}
+</html>

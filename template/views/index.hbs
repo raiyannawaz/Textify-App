@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>{{title}}</title>
+</head>
+<body>
+    <div class="container">
+        {{!-- Navbar  --}}
+        {{>navbar}}
+        {{!-- Navbar  --}}
+        {{!-- Content  --}}
+        <div class="home">
+            <div class="home-intro">
+                <p>Textify application helps any user to gain access to converting or translating texts. This application is built with multiple features and functionalities, such as the translation of texts into a foreign language and converting text into speech in a different language. Also, our application has dictionaries and grammar-checking functionalities.</p>
+            </div>
+            <div class="home-content">
+            <a href="/" target="_blank">
+                    <div class="home-content-div" id="content1">
+                <h2><i class="fa-solid fa-file-lines"></i> Text Translations <i class="fa-solid fa-language"></i></h2>
+                <p>Translations can be done over 15 languages, such as English, German, French, Spanish, Portuguese, Russian, Hebrew, Chinese, Japanese, Hindi, Urdu, Arabic, Persian, Turkish and Tamil.</p>
+            </div>
+            </a>
+            <a href="/dictionary" target="_blank">
+                <div class="home-content-div" id="content2">
+                <h2><i class="fa-solid fa-book-atlas"></i> Dictionary</h2>
+                <p>Dictionary allows users to get the vocabulary of words that they are searching for. Users can get multiple features using this functionality. This includes synonyms, antonyms, and examples.</p>
+                </div>
+            </a>
+            <a href="/" target="_blank">
+                <div class="home-content-div" id="content3">
+                <h2><i class="fa-solid fa-microphone"></i> Text-To-Speech <i class="fa-solid fa-volume-high"></i></h2>
+                <p>Converting text into speech can be done in 13 languages, such as English, German, French, Spanish, Portuguese, Russian, Greek, Chinese, Japanese, Hindi, Arabic, Turkish, and Tamil.</p>
+            </div>
+            </a>
+            <a href="/grammercheck" target="_blank">
+                <div class="home-content-div" id="content4">
+                <h2>Grammer Check <i class="fa-solid fa-spell-check"></i></h2>
+                <p>Grammar checking can be done by copy and paste. Using this functionality, users can correct the sentences with just one click. This functionality is built with AI.</p>
+            </div>
+            </a>
+            </div>
+        </div>
+        {{!-- Content  --}}
+    </div>
+</body>
+{{>script}}
+</html>
