@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="style.css">
+    <title>{{title}}</title>
+</head>
+
+<body>
+    <div class="container">
+        {{!-- Navbar --}}
+        <nav class="navbar">
+            <div class="left-nav">
+                <h1>{{title}}</h1>
+                <button class="btn-toggle">
+                    <i class="fa-solid fa-bars"></i>
+                </button>
+            </div>
+            <div class="right-nav">
+                <ul>
+                    <li><a href="/translate">Translate</a></li>
+                    <li><a href="/dictionary">Dictionary</a></li>
+                    <li class="active"><a href="/texttospeech">Text-To-Speech</a></li>
+                    <li><a href="/grammercheck">Grammer Check</a></li>
+                </ul>
+            </div>
+        </nav>
+        {{!-- Navbar --}}
+        {{!-- Content --}}
+        <div class="content">
+            <div class="converting-content">
+                <form action="/texttospeech" method="post">
+                    <div class="language-selector">
+                        <div>
+                            <select name="to" class="lang">
+                                <option value="">Language</option>
+                                <option value="en">English</option>
+                                <option value="de">German</option>
+                                <option value="es">Spanish</option>
+                                <option value="fr">French</option>
+                                <option value="hi">Hindi</option>
+                                <option value="ar">Arabic</option>
+                                <option value="ta">Tamil</option>
+                                <option value="zh">Chinese</option>
+                                <option value="pt">Portuguese</option>
+                                <option value="tr">Turkish</option>
+                                <option value="ja">Japanese</option>
+                                <option value="ru">Russian</option>
+                                <option value="el">Greek</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="converting-texts">
+                        <textarea name="texts" id="" rows="13">{{texts}}</textarea>
+                        <button type="submit">Submit</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+        {{!-- Content --}}
+    </div>
+</body>
+{{>script}}
+<script>
+    let select = document.querySelector('select')
+
+    select.onchange = function () {
+        let textarea = document.querySelector('textarea')
+        textarea.textContent = ''
+    }
+</script>
+
+</html>
