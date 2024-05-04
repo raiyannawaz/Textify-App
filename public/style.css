@@ -355,6 +355,11 @@ input:-webkit-autofill:active {
         min-height: 100dvh;
     }
 
+    .container::before{
+        background: linear-gradient(rgba(0, 0, 0, 0.8), rgba(0, 0, 0, 0.5)), url(bg.jpg) center;
+        background-size: 200% 100%;
+    }
+
     .container .navbar {
         background-color: var(--default-color);
         flex-direction: column;

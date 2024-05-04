@@ -1,11 +1,21 @@
+require('dotenv').config()
+require('./db/conn')
+
 const express = require('express')
 const app = express();
+
 const hbs = require('hbs')
 const bodyParser = require('body-parser')
-const axios = require('axios')
-const Gtts = require('gtts')
+
+const auth = require('./middleware/auth')
+const User = require('./models/User')
+
 const { check, validationResult } = require('express-validator')
 const cookieParser = require('cookie-parser')
+
+const axios = require('axios')
+const Gtts = require('gtts')
+
 const path = require('path')
 const fs = require('fs');
 
@@ -23,7 +33,13 @@ app.use(express.static(path.join(__dirname, '/public')))
 
 // HOME 
 
-app.get('/', async (req, res) => {
+app.get('/', auth, async (req, res) => {
+    
+    let _id = req._id;
+
+    let user = await User.findOne({ _id })
+    console.log(user)
+
     res.status(200)
     res.render('index', {
         title: 'Textify'
@@ -32,9 +48,296 @@ app.get('/', async (req, res) => {
 
 // HOME 
 
-// Translate
+// Login 
 
-app.get('/translate', (req, res) => {
+app.get('/login', (req, res) => {
+    res.status(200).render('login', {
+        title: 'Textify',
+        type: 'normal',
+        message: 'Enter Your Details',
+        normal: true,
+        success: false,
+        failed: false,
+        warning: false
+    })
+})
+
+app.post('/login', [
+    check('email', 'Invalid Email').isEmail(),
+    check('password', 'Password Minimum 8 Characters').isLength({ min: 8 })
+], async (req, res) => {
+    try {
+        let { email, password } = req.body;
+
+        let errors = validationResult(req)
+
+        if (email && password) {
+            if (errors.isEmpty()) {
+
+                let user = await User.findOne({ email })
+
+                if (user) {
+
+                    let comparePassword = await user.comparePassword(password)
+
+                    if (comparePassword) {
+                        let token = await user.generateAuthToken();
+
+                        res.cookie('jwt', token, {
+                            expires: new Date(Date.now() + 2592000000)
+                        })
+                        res.status(200).redirect('/')
+                    }
+                    else {
+                        res.status(400).render('login', {
+                            title: 'Textify',
+                            type: 'danger',
+                            message: 'Wrong Password',
+                            normal: false,
+                            success: false,
+                            warning: false,
+                            failed: true
+                        })
+                    }
+                }
+                else {
+                    res.status(400).render('login', {
+                        title: 'Textify',
+                        type: 'danger',
+                        message: 'User Not Exist',
+                        normal: false,
+                        success: false,
+                        warning: false,
+                        failed: true
+                    })
+                }
+            }
+            else {
+                res.status(400).render('login', {
+                    title: 'Textify',
+                    type: 'danger',
+                    message: errors.array()[0].msg,
+                    normal: false,
+                    success: false,
+                    warning: false,
+                    failed: true
+                })
+            }
+        }
+        else {
+            if (email === '' && password === '') {
+                res.status(300).render('login', {
+                    title: 'Textify',
+                    type: 'warning',
+                    message: 'Enter Your Details',
+                    normal: false,
+                    success: false,
+                    warning: true,
+                    failed: false
+                })
+            }
+            else if (email === '') {
+                res.status(300).render('login', {
+                    title: 'Textify',
+                    type: 'warning',
+                    message: 'Enter Your Email',
+                    normal: false,
+                    success: false,
+                    warning: true,
+                    failed: false
+                })
+            }
+            else if (password === '') {
+                res.status(300).render('login', {
+                    title: 'Textify',
+                    type: 'warning',
+                    message: 'Enter Your Password',
+                    normal: false,
+                    success: false,
+                    warning: true,
+                    failed: false
+                })
+            }
+        }
+    }
+    catch (err) {
+        console.log(err)
+        res.status(404).render('login', {
+            title: 'Textify',
+            type: 'danger',
+            message: 'Uncaught Error',
+            normal: false,
+            success: false,
+            warning: false,
+            failed: true
+        })
+    }
+})
+
+// Login 
+
+// Register 
+
+app.get('/register', (req, res) => {
+    res.status(200).render('register', {
+        title: 'Textify',
+        type: 'normal',
+        message: 'Enter Your Details',
+        normal: true,
+        success: false,
+        warning: false,
+        failed: false
+    })
+})
+
+app.post('/register', [
+    check('name').isString(),
+    check('email', 'Invalid Email').isEmail(),
+    check('password', 'Password Minimum 8 Characters').isLength({ min: 8 }),
+    check('confirmpassword', 'Password Minimum 8 Characters').isLength({ min: 8 })
+
+], async (req, res) => {
+    try {
+
+        let { name, email, password, confirmpassword } = req.body;
+
+        let errors = await validationResult(req)
+
+        if (name && email && password && confirmpassword) {
+
+            if (errors.isEmpty()) {
+
+                if (password === confirmpassword) {
+
+                    let user = await User.findOne({ email })
+
+                    if (user) {
+                        res.status(400).render('register', {
+                            title: 'Textify',
+                            type: 'danger',
+                            message: `Email Already Exist`,
+                            normal: false,
+                            success: false,
+                            warning: false,
+                            failed: true
+                        })
+                    }
+                    else {
+
+                        let response = await new User({ name, email, password, confirmpassword })
+                        await response.save()
+
+                        let token = await response.generateAuthToken();
+
+                        res.cookie('jwt', token, {
+                            expires: new Date(Date.now() + 2592000000)
+                        })
+
+                        res.status(200).redirect('/')
+                    }
+                }
+                else {
+                    res.status(400).render('register', {
+                        title: 'Textify',
+                        type: 'danger',
+                        message: `Password not matching`,
+                        normal: false,
+                        success: false,
+                        warning: false,
+                        failed: true
+                    })
+                }
+            }
+            else {
+                res.status(400).render('register', {
+                    title: 'Textify',
+                    type: 'danger',
+                    message: errors.array()[0].msg,
+                    normal: false,
+                    success: false,
+                    warning: false,
+                    failed: true
+                })
+            }
+            // console.log(errors.array(), errors.isEmpty())
+        }
+        else {
+            if (name === '' && email === '' && password === '' && confirmpassword === '') {
+                res.status(300).render('register', {
+                    title: 'Textify',
+                    type: 'warning',
+                    message: 'Enter Your Details',
+                    normal: false,
+                    success: false,
+                    warning: true,
+                    failed: false
+                })
+            }
+            else if (name === '') {
+                res.status(300).render('register', {
+                    title: 'Textify',
+                    type: 'warning',
+                    message: 'Enter Your Name',
+                    normal: false,
+                    success: false,
+                    warning: true,
+                    failed: false
+                })
+            }
+            else if (email === '') {
+                res.status(300).render('register', {
+                    title: 'Textify',
+                    type: 'warning',
+                    message: 'Enter Your Email',
+                    normal: false,
+                    success: false,
+                    warning: true,
+                    failed: false
+                })
+            }
+            else if (password === '') {
+                res.status(300).render('register', {
+                    title: 'Textify',
+                    type: 'warning',
+                    message: 'Enter Password',
+                    normal: false,
+                    success: false,
+                    warning: true,
+                    failed: false
+                })
+            }
+            else if (confirmpassword === '') {
+                res.status(300).render('register', {
+                    title: 'Textify',
+                    type: 'warning',
+                    message: 'Enter Confirm Password',
+                    normal: false,
+                    success: false,
+                    warning: true,
+                    failed: false
+                })
+            }
+        }
+    }
+    catch (err) {
+        console.log(err)
+        res.status(404).render('register', {
+            title: 'Textify',
+            type: 'danger',
+            message: 'Uncaught Error',
+            normal: false,
+            success: false,
+            warning: false,
+            failed: true
+        })
+    }
+})
+
+// Register 
+
+// TRANSLATE
+
+app.get('/translate', auth, (req, res) => {
     res.status(201)
     res.render('translate', {
         title: 'Textify',
@@ -114,11 +417,11 @@ app.post('/translate', async (req, res) => {
 
 })
 
-// Translate
+// TRANSLATE
 
 // DICTIONARY
 
-app.get('/dictionary', (req, res) => {
+app.get('/dictionary', auth, (req, res) => {
     res.status(201)
     res.render('dictionary', {
         title: 'Textify',
@@ -272,7 +575,7 @@ ${antonyms ? 'Antonyms: ' + antonyms : ''}`
 
 // Text To Speech 
 
-app.get('/texttospeech', (req, res) => {
+app.get('/texttospeech', auth, (req, res) => {
     res.status(201)
     res.render('texttospeech', {
         title: 'Textify',
@@ -364,7 +667,7 @@ app.post('/texttospeech', async (req, res) => {
 
 // GRAMMER CHECK 
 
-app.get('/grammercheck', (req, res) => {
+app.get('/grammercheck', auth, (req, res) => {
     res.status(201)
     res.render('grammercheck', {
         title: 'Textify',
