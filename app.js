@@ -28,7 +28,6 @@ hbs.registerPartials(path.join(__dirname, '/template/partials'))
 app.use(bodyParser.urlencoded())
 app.use(express.json())
 app.use(cookieParser())
-
 app.use(express.static(path.join(__dirname, '/public')))
 
 // HOME 
