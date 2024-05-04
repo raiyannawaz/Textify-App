@@ -358,21 +358,21 @@ app.post('/translate', async (req, res) => {
             res.status(300)
             res.render('translate', {
                 title: 'Textify',
-                texts: 'Please enter the language and the text to translate.'
+                texts: 'Please select the language and enter some texts'
             })
         }
         else if (body.to === '') {
             res.status(300)
             res.render('translate', {
                 title: 'Textify',
-                texts: 'Please enter the language to convert.'
+                texts: 'Please select the language'
             })
         }
         else if (body.texts === '') {
             res.status(300)
             res.render('translate', {
                 title: 'Textify',
-                texts: 'Please enter the text to convert.'
+                texts: 'Please enter some texts'
             })
         }
         else {
@@ -595,21 +595,21 @@ app.post('/texttospeech', async (req, res) => {
             res.status(302)
             res.render('texttospeech', {
                 title: 'Textify',
-                texts: 'Please enter the language and the text to convert into speech.'
+                texts: 'Please select the language and enter some texts'
             })
         }
         else if (body.to === '') {
             res.status(302)
             res.render('texttospeech', {
                 title: 'Textify',
-                texts: 'Please enter the language to convert into speech.'
+                texts: 'Please select the language'
             })
         }
         else if (body.texts === '') {
             res.status(302)
             res.render('texttospeech', {
                 title: 'Textify',
-                texts: 'Please enter the text to convert into speech.'
+                texts: 'Please enter some texts'
             })
         }
         else {
