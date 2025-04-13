@@ -117,6 +117,10 @@ li.active::before {
     line-height: 1.5;
 }
 
+.home-intro p span.name-text{
+    color: var(--default-color);
+}
+
 .home .home-content {
     height: 75%;
     width: 85%;
